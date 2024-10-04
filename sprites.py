@@ -33,7 +33,7 @@ class Player(Sprite):
             hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
             if hits:
                 if self.vx > 0:
-                    self.x = hits[0].rect.left
+                    self.x = hits[0].rect.left - TILESIZE
                 if self.vx < 0:
                     self.x = hits[0].rect.right
                 self.vx = 0
@@ -50,11 +50,18 @@ class Player(Sprite):
                     self.y = hits[0].rect.bottom
                 self.vy = 0
                 self.rect.y = self.y
-                print("collided on x axis")
-            else:
-                print("not working...for hits")
-        else:
-            print("not working for dir check")
+        #         print("collided on x axis")
+        #     else:
+        #         print("not working...for hits")
+        # else:
+        #     print("not working for dir check")
+    def collide_with_stuff(self, group, kill):
+        hits = pg.sprite.spritecollide(self, group, kill)
+        if hits:
+            if str(hits[0].__class__.__name__) == "Powerup":
+                self.speed = +20
+                print("i've got my powerup!")
+
     def update(self):
         self.get_keys()
         self.x += self.vx * self.game.dt
@@ -69,7 +76,7 @@ class Player(Sprite):
         self.collide_with_walls('y')
 
 # teleportation of player across the screen
-     
+        self.collide_with_stuff(self.game.all_powerups, True)
         
  # added Mob - moving objects
 # it is a child class of Sprite
@@ -81,8 +88,8 @@ class Mob(Sprite):
         self.image = pg.Surface((32, 32))
         self.image.fill(GREEN)
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
         self.speed = 25
 
     def update(self):
@@ -91,10 +98,8 @@ class Mob(Sprite):
         if self.rect.x > WIDTH or self.rect.x < 0:
             self.speed *= -1
             self.rect.y += 32
-            print("I hit the side...")
         if self.rect.y > HEIGHT:
             self.rect.y = 0
-            print("off the bottom of the screen")
             
         if self.rect.colliderect(self.game.player):
             self.speed *= -1
@@ -107,7 +112,20 @@ class Wall(Sprite):
         self.image = pg.Surface((TILESIZE, TILESIZE))
         self.image.fill(BLUE)
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-    def update(self):
-        pass
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+ 
+class Powerup(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.all_powerups
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(PINK)
+        self.rect = self.image.get_rect()
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+        
+
+
+

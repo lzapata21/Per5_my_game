@@ -20,9 +20,11 @@ class Game:
     self.map = Map(path.join(self.game_folder, 'level1.txt'))
   def new(self): 
     self.load_data()
+    print(self.map.data)
       # create a sprite group using the pg library
     self.all_sprites = pg.sprite.Group()
     self.all_walls = pg.sprite.Group()
+    self.all_powerups = pg.sprite.Group
     #  instantiating the class to create the player object 
 #     self.player = Player(self, 5, 5)
 #     self.mob = Mob(self, 100, 100)
@@ -38,13 +40,14 @@ class Game:
       for col, tile in enumerate(tiles):
         print(col*TILESIZE)
         if tile == '1':
-          
-          Wall(self, col*TILESIZE, row*TILESIZE)
-        if tile == 'M':
-          Mob(self, col*TILESIZE, row*TILESIZE)
+          Wall(self, col, row)
         if tile == 'P':
+          Mob(self, col, row)
+        if tile == 'M':
           self.player = Player(self, col, row)
-
+        if tile == 'U':
+          Powerup(self, col, row)
+    
 
     #  size of object which is being imported from settings
       
@@ -73,11 +76,19 @@ class Game:
   def update(self):
       # update all the sprites
     self.all_sprites.update()
-
+  def draw_text(self, surface, text, size, color, x, y):
+    font_name = pg.font.match_font('arial')
+    font = pg.font.Font(font_name, size)
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x,y)
+    surface.blit(text_surface, text_rect)
 
   def draw(self):
     self.screen.fill((0, 0, 0))
     self.all_sprites.draw(self.screen)
+    self.draw_text(self.screen, 'adfsasfs', 24, WHITE, WIDTH/2, HEIGHT/2 )
+    self.draw_textself.screen, str((self.dt*1000), WHITE, WIDTH/30, HEIGHT/30)
     pg.display.flip()
 
 if __name__ == "__main__":
