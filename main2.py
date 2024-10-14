@@ -1,10 +1,27 @@
+# this file was created by: Chris Cozort
+# github test
 # this is where we import libraries and modules
 import pygame as pg
 from settings import *
-from sprites import *
+# from sprites import *
+from sprites_side_scroller import *
 from tilemap import *
 from os import path
 # we are editing this file after installing git
+
+'''
+Elevator pitch: I want to create a game that follows an apprentice mage from the bottom of a tower to the top, leveling up as he climbs to the top to defeat the evil wizard...
+
+GOALS: to ascend the tower
+RULES: jump, cast spells, shields attack, cannot move up until puzzles and enemies defeated 
+FEEDBACK: Damage meter, spells interactions 
+FREEDOM: x and y movement with jump, platforming
+
+What's the sentence: Shoot iceblock with fireball melt iceblock to advance...
+
+Alpha goal: to create a sidescroller setup gravity, platform collision, jump
+
+'''
 
 # create a game class that carries all the properties of the game and methods
 class Game:
@@ -23,9 +40,12 @@ class Game:
     self.map = Map(path.join(self.game_folder, 'level1.txt'))
   def new(self):
     self.load_data()
+    print(self.map.data)
     # create the all sprites group to allow for batch updates and draw methods
     self.all_sprites = pg.sprite.Group()
     self.all_walls = pg.sprite.Group()
+    self.all_powerups = pg.sprite.Group()
+    self.all_coins = pg.sprite.Group()
     # instantiating the class to create the player object 
     # self.player = Player(self, 5, 5)
     # self.mob = Mob(self, 100, 100)
@@ -39,14 +59,15 @@ class Game:
       for col, tile in enumerate(tiles):
         print(col*TILESIZE)
         if tile == '1':
-          # Wall(self, col, row)
-          Wall(self, col*TILESIZE, row*TILESIZE)
+          Wall(self, col, row)
         if tile == 'M':
-          # Wall(self, col, row)
-          Mob(self, col*TILESIZE, row*TILESIZE)
+          Mob(self, col, row)
         if tile == 'P':
-          # Wall(self, col, row)
           self.player = Player(self, col, row)
+        if tile == 'U':
+          Powerup(self, col, row)
+        if tile == 'C':
+          Coin(self, col, row)
 
 # this is a method
 # methods are like functions that are part of a class
@@ -72,11 +93,20 @@ class Game:
   def update(self):
     # update all the sprites...and I MEAN ALL OF THEM
     self.all_sprites.update()
+  def draw_text(self, surface, text, size, color, x, y):
+    font_name = pg.font.match_font('arial')
+    font = pg.font.Font(font_name, size)
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x,y)
+    surface.blit(text_surface, text_rect)
 
   # output
   def draw(self):
-    self.screen.fill((0, 0, 0))
+    self.screen.fill(BLACK)
     self.all_sprites.draw(self.screen)
+    self.draw_text(self.screen, str(self.dt*1000), 24, WHITE, WIDTH/30, HEIGHT/30)
+    self.draw_text(self.screen, str(self.player.coin_count), 24, WHITE, WIDTH-100, 50)
     pg.display.flip()
 
 if __name__ == "__main__":
