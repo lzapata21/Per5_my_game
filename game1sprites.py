@@ -14,7 +14,7 @@ class Player(Sprite):
 
         x = x * TILESIZE
         y = y * TILESIZE
-        speed = 15
+        self.speed = 15
         self.vx, self.vy = 0, 0
     
     def get_keys(self):
@@ -47,6 +47,26 @@ class Player(Sprite):
                     self.y = hits[0].rect.bottom
                 self.vx = 0
                 self.rect.y = self.y
+                print("collided on x axis")
+            else:
+                print("not woorking for hits")
+
+    def upadte(self):
+        self.get_keys()
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+
+        if self.rect.x > WIDTH:
+            self.x = 0
+        elif self.rect.x < 0:
+            self.x = WIDTH - TILESIZE
+        
+        self.rect.x = self.x
+        self.collide_with_walls('x')
+
+        self.rect.y = self.y 
+        self.collide_with_walls('y')
+            
 
 class Mob(Sprite):
     def __init__(self, game, x, y):
