@@ -2,19 +2,22 @@ import pygame as pg
 from pygame.sprite import Sprite
 from game1settings import *
 from random import randint
+# notes to fix for screen size, player spawnpoint, and mob spawn points:
+
+
 
 class Player(Sprite):
     def __init__(self, game, x, y):
-        self.groups = game.allsprites 
+        self.groups = game.all_sprites 
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((50, 50))
-        self.image.fill((255,0, 0))
+        self.image = pg.Surface((32, 32))
+        self.image.fill((255, 0, 0))
         self.rect = self.image.get_rect()
 
-        x = x * TILESIZE
-        y = y * TILESIZE
-        self.speed = 15
+        self.x = x * TILESIZE
+        self.y = x * TILESIZE
+        self.speed = 10
         self.vx, self.vy = 0, 0
     
     def get_keys(self):
@@ -41,15 +44,15 @@ class Player(Sprite):
         if dir == 'y':
             hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
             if hits:
-                if self.vx > 0:
+                if self.vy > 0:
                     self.y = hits[0].rect.top - TILESIZE
                 if self.vy < 0:
                     self.y = hits[0].rect.bottom
-                self.vx = 0
+                self.vy = 0
                 self.rect.y = self.y
-                print("collided on x axis")
-            else:
-                print("not woorking for hits")
+            #     print("collided on x axis")
+            # else:
+            #     print("not woorking for hits")
 
     def upadte(self):
         self.get_keys()
@@ -78,7 +81,7 @@ class Mob(Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
-        self.speed = 25
+        self.speed = 5
 
     def update(self):
         self.rect.x += self.speed
@@ -89,7 +92,7 @@ class Mob(Sprite):
         if self.rect.y > HEIGHT:
             self.rect.y = 0
             
-        if self.rect.colliderect(self.game.player):
+        # if self.rect.colliderect(self.game.player):
             self.speed *= -1
 
 class Wall(Sprite):

@@ -34,6 +34,12 @@ class Game:
 
     self.all_sprites = pg.sprite.Group()
     self.all_walls = pg.sprite.Group()
+      
+
+    # self.player = Player(self, 5, 5)
+    # self.mob = Mob(self, 100, 100)
+    # self.wall = Wall(self, WIDTH/2, HEIGHT/2)
+
 
     for row, tiles in enumerate(self.map.data):
       print(row*TILESIZE)
@@ -41,6 +47,8 @@ class Game:
         print(col*TILESIZE)
         if tile == '1':
           Wall(self, col, row)
+        if tile == 'P':
+          self.player = Player(self, col, row)
         if tile == 'M':
           Mob(self, col, row)
   def run(self):
@@ -50,6 +58,7 @@ class Game:
       self.update()
       self.draw()
     pg.quit()
+
   def events(self):
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -58,7 +67,7 @@ class Game:
     self.all_sprites.update()
   def draw_text(self, surface, text, size, color, x, y):
     font_name = pg.font.match_font('arial')
-    font = pg.font.Font(font_name , size)
+    font = pg.font.Font(font_name, size)
     text_surface = font.render(text, True, color)
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x,y)
@@ -67,7 +76,7 @@ class Game:
   def draw(self):
     self.screen.fill(BLACK)
     self.all_sprites.draw(self.screen)
-    self.draw_text(self.screen, 'adfsasfs', 24, WHITE, WIDTH/2, HEIGHT/2)
+    self.draw_text(self.screen, 'JUMP', 24, WHITE, WIDTH/2, HEIGHT/2)
     self.draw_text(self.screen, str(self.dt*1000), 24, WHITE, WIDTH/30, HEIGHT/30)
     pg.display.flip()
 
