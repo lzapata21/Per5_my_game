@@ -34,12 +34,8 @@ class Game:
 
     self.all_sprites = pg.sprite.Group()
     self.all_walls = pg.sprite.Group()
-      
-
-    # self.player = Player(self, 5, 5)
-    # self.mob = Mob(self, 100, 100)
-    # self.wall = Wall(self, WIDTH/2, HEIGHT/2)
-
+    self.all_coins = pg.sprite.Group()
+    self.all_mobs = pg.sprite.Group()
 
     for row, tiles in enumerate(self.map.data):
       print(row*TILESIZE)
@@ -51,6 +47,12 @@ class Game:
           self.player = Player(self, col, row)
         if tile == 'M':
           Mob(self, col, row)
+        if tile == 'C':
+          Coin(self, col, row)
+  
+    
+    
+          
   def run(self):
     while self.playing:
       self.dt = self.clock.tick(FPS) / 1000

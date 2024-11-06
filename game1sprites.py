@@ -5,36 +5,31 @@ from random import randint
 # notes to fix for screen size, player spawnpoint, and mob spawn points:
 
 
-
+vec = pg.math.Vector2
 class Player(Sprite):
          
     def __init__(self, game, x, y):
         self.groups = game.all_sprites
-        Sprite.__init__(self, self.groups)
+        Sprite. __init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((32, 32))
-        self.image.fill((255, 0, 0))
+        self.image.fill(RED)
         self.rect = self.image.get_rect()
-        # self.rect.x = x
-        # self.rect.y = y
-        # self.x = x * TILESIZE
-        # self.y = y * TILESIZE
         self.pos = vec(x*TILESIZE, y*TILESIZE)
         self.vel = vec(0,0)
         self.acc = vec(0,0)
         self.speed = 3
-        # self.vx, self.vy = 0, 0
         self.coin_count = 0
         self.jump_power = 15
         self.jumping = False
     def get_keys(self):
         keys = pg.key.get_pressed()
-        # if keys[pg.K_w]:
-        #     self.vy -= self.speed
+        if keys[pg.K_w]:
+            self.vy -= self.speed
         if keys[pg.K_a]:
             self.vel.x -= self.speed
-        # if keys[pg.K_s]:
-        #     self.vy += self.speed
+        if keys[pg.K_s]:
+            self.vy += self.speed
         if keys[pg.K_d]:
             self.vel.x += self.speed
         if keys[pg.K_SPACE]:
@@ -75,10 +70,10 @@ class Player(Sprite):
                 self.vel.y = 0
                 self.rect.y = self.pos.y
                 self.jumping = False
-                # print("Collided on x axis")
+        #         print("Collided on x axis")
         #     else:
         #         print("not working...for hits")
-        # # else:
+        # else:
         #     print("not working for dir check")
     def collide_with_stuff(self, group, kill):
         hits = pg.sprite.spritecollide(self, group, kill)
@@ -90,9 +85,9 @@ class Player(Sprite):
             #         m.speed = 20
             #         print(m.speed)
             #     print("I've gotten a powerup!")
-            # if str(hits[0].__class__.__name__) == "Coin":
-            #     print("I got a coin!!!")
-            #     self.coin_count += 1
+            if str(hits[0].__class__.__name__) == "Coin":
+                print("I got a coin!!!")
+                self.coin_count += 1
             # if str(hits[0].__class__.__name__) == "Portal":
             #     self.game.load_level("level2.txt")
             if str(hits[0].__class__.__name__) == "Mob":
@@ -122,7 +117,7 @@ class Player(Sprite):
         self.collide_with_walls('y')
         # teleport the player to the other side of the screen
         # self.collide_with_stuff(self.game.all_powerups, True)
-        # self.collide_with_stuff(self.game.all_coins, True)
+        self.collide_with_stuff(self.game.all_coins, True)
         self.collide_with_stuff(self.game.all_mobs, False)
 class Mob(Sprite):
     def __init__(self, game, x, y):
@@ -155,6 +150,7 @@ class Mob(Sprite):
         if self.rect.x > WIDTH-64 or self.rect.x < 64:
             self.speed *= -1
             self.rect.y += 64
+
 class Wall(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.all_walls
@@ -162,6 +158,17 @@ class Wall(Sprite):
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
         self.image.fill(BLUE)
+        self.rect = self.image.get_rect()
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+
+class Coin(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.all_coins
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(GOLD)
         self.rect = self.image.get_rect()
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
