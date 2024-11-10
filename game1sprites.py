@@ -2,6 +2,7 @@ import pygame as pg
 from pygame.sprite import Sprite
 from game1settings import *
 from random import randint
+from utils import *
 # notes to fix for screen size, player spawnpoint, and mob spawn points:
 
 
@@ -21,7 +22,10 @@ class Player(Sprite):
         self.speed = 3
         self.coin_count = 0
         self.jump_power = 15
+        self.cd = Cooldown()
+        self.invulnerable = Cooldown()
         self.jumping = False
+        self.health = 100
     def get_keys(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_w]:
@@ -34,6 +38,13 @@ class Player(Sprite):
             self.vel.x += self.speed
         if keys[pg.K_SPACE]:
             self.jump()
+
+# this is damage when in lava
+    def shoot(self):
+        self.cd.event_time = floor(pg.time.get_ticks()/1000)
+        if self.cd.delta > .01:
+            print("taking damage")
+           
     def jump(self):
         print("im trying to jump")
         print(self.vel.y)
@@ -88,8 +99,13 @@ class Player(Sprite):
             if str(hits[0].__class__.__name__) == "Coin":
                 print("I got a coin!!!")
                 self.coin_count += 1
-            # if str(hits[0].__class__.__name__) == "Portal":
-            #     self.game.load_level("level2.txt")
+            if str(hits[0].__class__.__name__) == "Portal":
+                self.game.load_level("level2.txt")
+                # in class figure out how to make another level
+            if str(hits[0].__class__.__name__) == "Lava":
+                self.invulnerable.event_time = floor(pg.time.get_ticks()/1000)
+                if self.invulnerable.delta > .01:
+                    self.health -= 1
             if str(hits[0].__class__.__name__) == "Mob":
                 if self.vel.y > 0:
                     print("collided with mob")
@@ -98,6 +114,8 @@ class Player(Sprite):
                     print("ouch I was hurt!!!")
 
     def update(self):
+        self.cd.ticking()
+        self.invulnerable.ticking()           
         self.acc = vec(0, GRAVITY)
         self.get_keys()
         # self.x += self.vx * self.game.dt
@@ -119,6 +137,7 @@ class Player(Sprite):
         # self.collide_with_stuff(self.game.all_powerups, True)
         self.collide_with_stuff(self.game.all_coins, True)
         self.collide_with_stuff(self.game.all_mobs, False)
+        self.collide_with_stuff(self.game.all_lava, False)
 class Mob(Sprite):
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.all_mobs
@@ -169,6 +188,28 @@ class Coin(Sprite):
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
         self.image.fill(GOLD)
+        self.rect = self.image.get_rect()
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+
+class Portal(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.all_portals
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(ORANGE)
+        self.rect = self.image.get_rect()
+        self.rect.x = x * TILESIZE
+        self.rect.y = y * TILESIZE
+
+class Lava(Sprite):
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.all_lava
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image.fill(MAGENTA)
         self.rect = self.image.get_rect()
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
