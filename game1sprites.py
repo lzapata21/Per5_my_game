@@ -29,11 +29,11 @@ class Player(Sprite):
     def get_keys(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_w]:
-            self.vy -= self.speed
+            self.vel.y -= self.speed
         if keys[pg.K_a]:
             self.vel.x -= self.speed
         if keys[pg.K_s]:
-            self.vy += self.speed
+            self.vel.y += self.speed
         if keys[pg.K_d]:
             self.vel.x += self.speed
         if keys[pg.K_SPACE]:
@@ -99,13 +99,17 @@ class Player(Sprite):
             if str(hits[0].__class__.__name__) == "Coin":
                 print("I got a coin!!!")
                 self.coin_count += 1
-            if str(hits[0].__class__.__name__) == "Portal":
-                self.game.load_level("level2.txt")
-                # in class figure out how to make another level
+            
             if str(hits[0].__class__.__name__) == "Lava":
                 self.invulnerable.event_time = floor(pg.time.get_ticks()/1000)
                 if self.invulnerable.delta > .01:
                     self.health -= 1
+                    print("taking damage")
+            
+            if str(hits[0].__class__.__name__) == "Portal":
+                self.game.load_level("level2.txt")
+                # in class figure out how to make another level
+           
             if str(hits[0].__class__.__name__) == "Mob":
                 if self.vel.y > 0:
                     print("collided with mob")
@@ -133,6 +137,7 @@ class Player(Sprite):
 
         self.rect.y = self.pos.y
         self.collide_with_walls('y')
+    
         # teleport the player to the other side of the screen
         # self.collide_with_stuff(self.game.all_powerups, True)
         self.collide_with_stuff(self.game.all_coins, True)
@@ -198,7 +203,7 @@ class Portal(Sprite):
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(ORANGE)
+        self.image.fill(YELLOW)
         self.rect = self.image.get_rect()
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
@@ -209,7 +214,7 @@ class Lava(Sprite):
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(MAGENTA)
+        self.image.fill(ORANGE)
         self.rect = self.image.get_rect()
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE

@@ -23,17 +23,25 @@ class Game:
     self.screen = pg.display.set_mode((WIDTH, HEIGHT))
     pg.display.set_caption("jump master")
     self.playing = True
-  def load_level(self, level):
-    # kill all sprites to free up memory
-    for s in self.all_sprites:
-       s.kill()
-      #  print(len(self.all_sprites))
-    self.map = Map(path.join(self.game_folder, level))
-
-# import map but rewrite when comes the time
+    self.running = True
+    self.score = 0
+    self.highscore = 0
   def load_data(self):
     self.game_folder = path.dirname(__file__)
     self.map = Map(path.join(self.game_folder, 'game1level2.txt'))
+  def load_level(self, level):
+
+    # kill all sprites to free up memory
+    for s in self.all_sprites:
+       s.kill()
+    self.map = Map(path.join(self.game_folder, level))
+      #  print(len(self.all_sprites))
+
+    
+
+# import map but rewrite when comes the time
+  
+    
 
   def new(self):
     self.load_data()
@@ -48,22 +56,27 @@ class Game:
     self.all_portals = pg.sprite.Group()
 
 
+
     for row, tiles in enumerate(self.map.data):
-      print(row*TILESIZE)
+      # print(row*TILESIZE)
       for col, tile in enumerate(tiles):
-        print(col*TILESIZE)
+        # print(col*TILESIZE)
         if tile == '1':
           Wall(self, col, row)
-        if tile == 'P':
-          self.player = Player(self, col, row)
+        
         if tile == 'M':
           Mob(self, col, row)
         if tile == 'C':
           Coin(self, col, row)
         if tile == '0':
           Portal(self, col, row)
+
         if tile == 'L':
           Lava(self, col, row)
+      for row, tiles in enumerate(self.map.data):
+         for col, tile in enumerate(tiles):
+          if tile == 'P':
+            self.player = Player(self, col, row)
 
                    
   def run(self):
@@ -102,28 +115,31 @@ class Game:
     surface.blit(text_surface, text_rect)
 
   def draw(self):
-    self.screen.fill(BLACK)
+    self.screen.fill(WHITE)
     self.all_sprites.draw(self.screen)
     self.draw_text(self.screen, str(self.player.health), 24, BLACK, WIDTH/2, HEIGHT/2)
     self.draw_text(self.screen, str(self.dt*1000), 24, WHITE, WIDTH/30, HEIGHT/30)
     self.draw_text(self.screen, str(self.game_timer.get_countdown()), 24, WHITE, WIDTH/30, HEIGHT/16)
-    self.draw_text(self.screen, 'JUMP', 24, WHITE, WIDTH/2, HEIGHT/2)
+    self.draw_text(self.screen, str(self.player.coin_count), 24, WHITE, WIDTH-100, 50)
+    # self.draw_text(self.screen, 'JUMP', 24, WHITE, WIDTH/2, HEIGHT/2)
     pg.display.flip()
+    # note:check color and position for health
   
   def show_go_screen(self):
         if not self.running:
             return
-        self.screen.fill(WHITE)
+        self.screen.fill(BLACK)
         self.draw_text(self.screen, "GAME OVER", 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        self.draw_text(self.screen, "Score: " + str(self.score), 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        # self.draw_text(self.screen, "Score: " + str(self.score), 22, WHITE, WIDTH / 2, HEIGHT / 2)
         self.draw_text(self.screen, "Press a key to play again", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
-        if self.score > self.highscore:
-            self.highscore = self.score
-            self.draw_text(self.screen, "NEW HIGH SCORE!", 22, WHITE, WIDTH / 2, HEIGHT / 2 + 40)
-        else:
-            self.draw_text(self.screen, "High Score: " + str(self.highscore), 22, WHITE, WIDTH / 2, HEIGHT / 2 + 40)
-        pg.display.flip()
-        self.wait_for_key() 
+        # if self.score > self.highscore:
+        #     self.highscore = self.score
+        #     self.draw_text(self.screen, "NEW HIGH SCORE!", 22, WHITE, WIDTH / 2, HEIGHT / 2 + 40)
+        # else:
+        #     self.draw_text(self.screen, "High Score: " + str(self.highscore), 22, WHITE, WIDTH / 2, HEIGHT / 2 + 40)
+        # pg.display.flip()
+        # self.wait_for_key() 
+
   def wait_for_key(self):
         waiting = True
         while waiting:
@@ -137,9 +153,9 @@ class Game:
 
 
 if __name__ == "__main__":
-  print("Main works")
   pg.init()
   g = Game()
-  print("main works")
-  g.new()
-  g.run()
+  g.show_go_screen()
+  while g.playing:
+    g.new()
+    g.run()
