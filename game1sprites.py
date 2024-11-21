@@ -23,13 +23,11 @@ class Player(Sprite):
         self.coin_count = 0
         self.jump_power = 15
         self.jumping = False
+        self.health = 100
         self.cd = Cooldown()
         self.invulnerable = Cooldown()       
-        self.health = 100
     def get_keys(self):
         keys = pg.key.get_pressed()
-        if keys[pg.K_e]:
-            self.shoot()
         if keys[pg.K_w]:
             self.vel.y -= self.speed
         if keys[pg.K_a]:
@@ -81,34 +79,23 @@ class Player(Sprite):
     def collide_with_stuff(self, group, kill):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits:
-            pass
-            # if str(hits[0].__class__.__name__) == "Coin":
-            #     print("I got a coin!!!")
-            #     self.coin_count += 1
-            # if str(hits[0].__class__.__name__) == "Lava":
-            #     self.health -= 1
-                # print(self.health)
-        
-
+            if str(hits[0].__class__.__name__) == "Lava":
+                print("i hit lava")
+                self.health -= 1
 
     def update(self):
         self.acc = vec(0, GRAVITY)
         self.get_keys()
         self.acc.x += self.vel.x * FRICTION
         self.vel += self.acc
-
         if abs(self.vel.x) < 0.1:
             self.vel.x = 0
-
         self.pos += self.vel + 0.5 * self.acc
-
         self.rect.x = self.pos.x
         self.collide_with_walls('x')
-
         self.rect.y = self.pos.y
         self.collide_with_walls('y')
-    
-        # teleport the player to the other side of the screen
+           # teleport the player to the other side of the screen
         # self.collide_with_stuff(self.game.all_powerups, True)
         self.collide_with_stuff(self.game.all_coins, True)
         self.collide_with_stuff(self.game.all_mobs, False)

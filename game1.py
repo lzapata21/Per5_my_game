@@ -68,13 +68,9 @@ class Game:
         if tile == '1':
           Wall(self, col, row)
         if tile == 'M':
-          Mob(self, col, row)
-        
+          Mob(self, col, row)       
         if tile == 'C':
-          Coin(self, col, row)
-        # if tile == '0':
-        #   Portal(self, col, row)
-       
+          Coin(self, col, row)       
         if tile == 'L':
           Lava(self, col, row)
         
@@ -107,7 +103,7 @@ class Game:
 
   def update(self):
     self.game_timer.ticking()
-    self.player.health -= 1
+   
     hits  = pg.sprite.spritecollide(self.player, self.all_mobs, False)
     if hits:
        print("i hit something...")
@@ -121,19 +117,16 @@ class Game:
     text_rect = text_surface.get_rect()
     text_rect.midtop = (x,y)
     surface.blit(text_surface, text_rect)
-
   def draw(self):
     self.screen.fill(WHITE)
     self.all_sprites.draw(self.screen)
-    self.draw_text(self.screen, str(self.player.health), 24, BLACK, WIDTH/2, HEIGHT/2)
-    print(self.player.health)
     draw_stat_bar(self.screen, 5, 5, 150, 25, self.player.health, RED, WHITE)
-    # self.draw_text(self.screen, str(self.dt*1000), 24, WHITE, WIDTH/30, HEIGHT/30)
+    # self.draw_text(self.screen, str(self.dt*1000), 24, WHITE, WIDTH/30, HEIGHT/30)d
     # self.draw_text(self.screen, str(self.game_timer.get_countdown()), 24, WHITE, WIDTH/30, HEIGHT/16)
     # self.draw_text(self.screen, str(self.player.coin_count), 24, WHITE, WIDTH-100, 50)
     # self.draw_text(self.screen, 'JUMP', 24, WHITE, WIDTH/2, HEIGHT/2)
     pg.display.flip()
-    # note:check color and position for health
+    
   
 
   def wait_for_key(self):

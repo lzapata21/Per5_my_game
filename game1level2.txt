@@ -23,6 +23,3 @@
 1.....P...L....................1
 11111111111111111111111111111111
 
-
-note: rewrite with mult-level jumping platforms (like get over it) - add jumpkill and coins after killing mob
-also: L=lava 1=wall M=mob c=coin P=Player U=Powerup-but there are no power ups or coins (might add alter)
