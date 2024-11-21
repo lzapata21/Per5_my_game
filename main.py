@@ -1,22 +1,41 @@
-# gittest
-# omprt 
+# this file was created by: Chris Cozort
+# github test
+# this is where we import libraries and modules
 import pygame as pg
-from settings import *
+from game1settings import *
+from utils import *
 # from sprites import *
-from sprites_side_scroller import * 
+from sprites_side_scroller import *
 from tilemap import *
 from os import path
-'''
-
-
-GOALS: 
-FREEDOMS:
-FEEDBACK:
-RULES:
-what's the sentence: player 1 collides with enemy and enemy bounces off...
+# we are editing this file after installing git
+# git test
+# git test
 
 '''
+Elevator pitch: I want to create a game that follows an apprentice mage from the bottom of a tower to the top, leveling up as he climbs to the top to defeat the evil wizard...
 
+GOALS: to ascend the tower
+RULES: jump, cast spells, shields attack, cannot move up until puzzles and enemies defeated 
+FEEDBACK: Damage meter, spells interactions 
+FREEDOM: x and y movement with jump, platforming
+
+What's the sentence: Shoot iceblock with fireball melt iceblock to advance...
+
+Alpha goal: to create a sidescroller setup gravity, platform collision, jump
+
+'''
+
+'''
+Sources:
+https://www.pygame.org/docs/ref/mouse.html - used to see if mouse is clicked
+
+Prompt for ChatGPT:
+
+
+'''
+
+# create a game class that carries all the properties of the game and methods
 class Game:
   # initializes all the things we need to run the game...includes the game clock which can set the FPS
   def __init__(self):
@@ -33,11 +52,11 @@ class Game:
   # this is where the game creates the stuff you see and hear
   def load_data(self):
     self.game_folder = path.dirname(__file__)
-    self.img_folder = path.join(self.game_folder, 'images')
-    self.player_img = pg.image.load(path.join(self.img_folder, 'bell.png'))
-    self.ladder_img = pg.image.load(path.join(self.img_folder, 'ladder.png'))
-    self.dk_img = pg.image.load(path.join(self.img_folder, 'DK.png'))
-    self.map = Map(path.join(self.game_folder, 'dk_level1.txt'))
+    # self.img_folder = path.join(self.game_folder, 'images')
+    # self.player_img = pg.image.load(path.join(self.img_folder, 'bell.png'))
+    # self.ladder_img = pg.image.load(path.join(self.img_folder, 'ladder.png'))
+    # self.dk_img = pg.image.load(path.join(self.img_folder, 'DK.png'))
+    self.map = Map(path.join(self.game_folder, 'game1level2.txt'))
   def load_level(self, level):
     # kill all sprites to free up memory
     for s in self.all_sprites:
@@ -45,6 +64,37 @@ class Game:
       #  print(len(self.all_sprites))
     # From load data to create new map object with level parameter
     self.map = Map(path.join(self.game_folder, level))
+    for row, tiles in enumerate(self.map.data):
+      # print(row*TILESIZE)
+      for col, tile in enumerate(tiles):
+        # print(col*TILESIZE)
+        if tile == '1':
+          Wall(self, col, row)
+        if tile == 'M':
+          Mob(self, col, row)
+        # if tile == 'U':
+          # Powerup(self, col, row)
+        if tile == 'C':
+          Coin(self, col, row)
+        # if tile == 'T':
+          # Portal(self, col, row)
+        # if tile == 'R':
+          # Projectile(self, col, row)
+        # if tile == 'V':
+          # Moving_Platform(self, col, row)
+        # if tile == 'L':
+          # Ladder(self, col, row)
+        if tile == 'L':
+          Lava(self, col, row)
+        # if tile == 'B':
+          # Barrel(self, col, row)
+    # for row, tiles in enumerate(self.map.data):
+    #   # print(row*TILESIZE)
+    #   for col, tile in enumerate(tiles):
+    #     if tile == 'P':
+    #       self.player = Player(self, col, row)
+    #     if tile == 'D':
+    #       self.player = DK(self, col, row)
 
 
   def new(self):
@@ -56,15 +106,15 @@ class Game:
     # create the all sprites group to allow for batch updates and draw methods
     self.all_sprites = pg.sprite.Group()
     self.all_walls = pg.sprite.Group()
-    self.all_powerups = pg.sprite.Group()
-    self.all_coins = pg.sprite.Group()
-    self.all_platforms = pg.sprite.Group()
+    # self.all_powerups = pg.sprite.Group()
+    # self.all_coins = pg.sprite.Group()
+    # self.all_platforms = pg.sprite.Group()
     self.all_portals = pg.sprite.Group()
-    self.all_barrels = pg.sprite.Group()
+    # self.all_barrels = pg.sprite.Group()
     self.all_mobs = pg.sprite.Group()
-    self.all_projectiles = pg.sprite.Group()
-    self.all_explosions = pg.sprite.Group()
-    self.all_ladders = pg.sprite.Group()
+    # self.all_projectiles = pg.sprite.Group()
+    # self.all_explosions = pg.sprite.Group()
+    # self.all_ladders = pg.sprite.Group()
     self.all_lava = pg.sprite.Group()
     # instantiating the class to create the player object 
     # self.player = Player(self, 5, 5)
@@ -82,29 +132,33 @@ class Game:
           Wall(self, col, row)
         if tile == 'M':
           Mob(self, col, row)
-        if tile == 'U':
-          Powerup(self, col, row)
-        if tile == 'C':
-          Coin(self, col, row)
-        if tile == 'T':
-          Portal(self, col, row)
-        if tile == 'R':
-          Projectile(self, col, row)
-        if tile == 'V':
-          Moving_Platform(self, col, row)
+        # if tile == 'U':
+        #   Powerup(self, col, row)
+        # if tile == 'C':
+        #   Coin(self, col, row)
+        # if tile == 'T':
+        #   Portal(self, col, row)
+        # if tile == 'R':
+        #   Projectile(self, col, row)
+        # if tile == 'V':
+        #   Moving_Platform(self, col, row)
+        # if tile == 'L':
+        #   Ladder(self, col, row)
         if tile == 'L':
-          Ladder(self, col, row)
-        if tile == 'A':
           Lava(self, col, row)
-        if tile == 'B':
-          Barrel(self, col, row)
-    for row, tiles in enumerate(self.map.data):
-      # print(row*TILESIZE)
-      for col, tile in enumerate(tiles):
-        if tile == 'P':
-          self.player = Player(self, col, row)
-        if tile == 'D':
-          self.player = DK(self, col, row)
+        # if tile == 'B':
+        #   Barrel(self, col, row)
+    
+    # for row, tiles in enumerate(self.map.data):
+    #   # print(row*TILESIZE)
+    #   for col, tile in enumerate(tiles):
+    #     if tile == 'P':
+    #       self.player = Player(self, col, row)
+    #     if tile == 'D':
+    #       self.player = DK(self, col, row)
+    # for i in range(10):
+    #   p = Powerup(self, randint(0, WIDTH//TILESIZE), randint(0, HEIGHT//TILESIZE))
+    #   print(p.rect.x)
          
 
 # this is a method
@@ -133,8 +187,9 @@ class Game:
   def update(self):
 
     self.game_timer.ticking()
-    if self.player.health < 95:
-      self.playing = False
+
+    # if self.player.health < 95:
+    #   self.playing = False
     # if self.game_timer.cd < 40:
     #   for s in self.all_sprites:
     #     s.kill()
@@ -159,7 +214,7 @@ class Game:
     self.draw_text(self.screen, str(self.player.health), 24, BLACK, WIDTH/2, HEIGHT/2)
     self.draw_text(self.screen, str(self.dt*1000), 24, WHITE, WIDTH/30, HEIGHT/30)
     self.draw_text(self.screen, str(self.game_timer.get_countdown()), 24, WHITE, WIDTH/30, HEIGHT/16)
-    self.draw_text(self.screen, str(self.player.coin_count), 24, WHITE, WIDTH-100, 50)
+    self.draw_text(self.screen, str(self.player.coins), 24, WHITE, WIDTH-100, 50)
     pg.display.flip()
 
   def show_go_screen(self):

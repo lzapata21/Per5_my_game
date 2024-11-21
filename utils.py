@@ -29,7 +29,7 @@ class Timer():
 
 class Cooldown():
     def __init__(self):
-        self.current_time = 0
+        self.current_time = 1
         self.event_time = 0
         self.delta = 0
     def ticking(self):

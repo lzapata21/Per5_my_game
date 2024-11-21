@@ -15,6 +15,18 @@ RULES: no powerups, but there is mobs and walls that cannot be passed, make it a
 
 '''
 
+
+def draw_stat_bar(surf, x, y, w, h, pct, fill_color, outline_color):
+    if pct < 0:
+        pct = 0
+    BAR_LENGTH = w
+    BAR_HEIGHT = h
+    fill = (pct / 100) * BAR_LENGTH
+    outline_rect = pg.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
+    fill_rect = pg.Rect(x, y, fill, BAR_HEIGHT)
+    pg.draw.rect(surf, fill_color, fill_rect)
+    pg.draw.rect(surf, outline_color, outline_rect, 2)
+
 class Game:
   def __init__(self):
     pg.init()
@@ -33,15 +45,9 @@ class Game:
 
     # kill all sprites to free up memory
     for s in self.all_sprites:
-       s.kill()
+        s.kill()
     self.map = Map(path.join(self.game_folder, level))
       #  print(len(self.all_sprites))
-
-    
-
-# import map but rewrite when comes the time
-  
-    
 
   def new(self):
     self.load_data()
@@ -52,33 +58,38 @@ class Game:
     self.all_walls = pg.sprite.Group()
     self.all_lava = pg.sprite.Group()
     self.all_coins = pg.sprite.Group()
-    self.all_mobs = pg.sprite.Group()
-    self.all_portals = pg.sprite.Group()
-
-
-
+    self.all_mobs = pg.sprite.Group() 
+    # self.all_portals = pg.sprite.Group()
+# import map but rewrite when comes the time
     for row, tiles in enumerate(self.map.data):
       # print(row*TILESIZE)
       for col, tile in enumerate(tiles):
         # print(col*TILESIZE)
         if tile == '1':
           Wall(self, col, row)
-        
         if tile == 'M':
           Mob(self, col, row)
+        
         if tile == 'C':
           Coin(self, col, row)
-        if tile == '0':
-          Portal(self, col, row)
-
+        # if tile == '0':
+        #   Portal(self, col, row)
+       
         if tile == 'L':
           Lava(self, col, row)
-      for row, tiles in enumerate(self.map.data):
-         for col, tile in enumerate(tiles):
-          if tile == 'P':
-            self.player = Player(self, col, row)
+        
+          
+    for row, tiles in enumerate(self.map.data):
+      # print(row*TILESIZE)
+      for col, tile in enumerate(tiles):
+        if tile == 'P':
+          self.player = Player(self, col, row)
+         
 
-                   
+
+    
+
+  
   def run(self):
     while self.playing:
       self.dt = self.clock.tick(FPS) / 1000
@@ -95,14 +106,11 @@ class Game:
           self.running = False
 
   def update(self):
-
     self.game_timer.ticking()
-    if self.player.health < 95:
-      self.playing = False
-    #   if self.game_timer.cd < 40:
-    #     for s in self.all_sprites:
-    #       s.kill()
-    # self.load_level("game1lvl2.txt")
+    self.player.health -= 1
+    hits  = pg.sprite.spritecollide(self.player, self.all_mobs, False)
+    if hits:
+       print("i hit something...")
     
 
     self.all_sprites.update()
@@ -118,27 +126,15 @@ class Game:
     self.screen.fill(WHITE)
     self.all_sprites.draw(self.screen)
     self.draw_text(self.screen, str(self.player.health), 24, BLACK, WIDTH/2, HEIGHT/2)
-    self.draw_text(self.screen, str(self.dt*1000), 24, WHITE, WIDTH/30, HEIGHT/30)
-    self.draw_text(self.screen, str(self.game_timer.get_countdown()), 24, WHITE, WIDTH/30, HEIGHT/16)
-    self.draw_text(self.screen, str(self.player.coin_count), 24, WHITE, WIDTH-100, 50)
+    print(self.player.health)
+    draw_stat_bar(self.screen, 5, 5, 150, 25, self.player.health, RED, WHITE)
+    # self.draw_text(self.screen, str(self.dt*1000), 24, WHITE, WIDTH/30, HEIGHT/30)
+    # self.draw_text(self.screen, str(self.game_timer.get_countdown()), 24, WHITE, WIDTH/30, HEIGHT/16)
+    # self.draw_text(self.screen, str(self.player.coin_count), 24, WHITE, WIDTH-100, 50)
     # self.draw_text(self.screen, 'JUMP', 24, WHITE, WIDTH/2, HEIGHT/2)
     pg.display.flip()
     # note:check color and position for health
   
-  def show_go_screen(self):
-        if not self.running:
-            return
-        self.screen.fill(BLACK)
-        self.draw_text(self.screen, "GAME OVER", 48, WHITE, WIDTH / 2, HEIGHT / 4)
-        # self.draw_text(self.screen, "Score: " + str(self.score), 22, WHITE, WIDTH / 2, HEIGHT / 2)
-        self.draw_text(self.screen, "Press a key to play again", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
-        # if self.score > self.highscore:
-        #     self.highscore = self.score
-        #     self.draw_text(self.screen, "NEW HIGH SCORE!", 22, WHITE, WIDTH / 2, HEIGHT / 2 + 40)
-        # else:
-        #     self.draw_text(self.screen, "High Score: " + str(self.highscore), 22, WHITE, WIDTH / 2, HEIGHT / 2 + 40)
-        # pg.display.flip()
-        # self.wait_for_key() 
 
   def wait_for_key(self):
         waiting = True
@@ -155,7 +151,6 @@ class Game:
 if __name__ == "__main__":
   pg.init()
   g = Game()
-  g.show_go_screen()
   while g.playing:
     g.new()
     g.run()
