@@ -28,8 +28,7 @@ class Player(Sprite):
         self.invulnerable = Cooldown()       
     def get_keys(self):
         keys = pg.key.get_pressed()
-        if keys[pg.K_w]:
-            self.vel.y -= self.speed
+        
         if keys[pg.K_a]:
             self.vel.x -= self.speed
         if keys[pg.K_s]:
